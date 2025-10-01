@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Users</title>
+<style>
+body { font-family: Arial; margin: 30px; }
+ul { max-width: 400px; margin: auto; list-style: none; padding: 0; }
+li { border-bottom: 1px solid #ddd; padding: 6px 0; }
+</style>
+</head>
+<body>
+<h2>All Users</h2>
+<ul id="usersList">Loading...</ul>
+
+<script>
+async function loadUsers(){
+    const token = localStorage.getItem('token');
+    if(!token){ document.getElementById('usersList').innerText="Login required"; return; }
+    const res = await fetch('/api/users/', { headers: { 'Authorization':'Token '+token }});
+    if(res.ok){
+        const users = await res.json();
+        const ul = document.getElementById('usersList');
+        ul.innerHTML = '';
+        users.forEach(u=>{
+            const li = document.createElement('li');
+            li.textContent = `${u.id} — ${u.username} (${u.email})`;
+            ul.appendChild(li);
+        });
+    } else {
+        document.getElementById('usersList').innerText="Error "+res.status;
+    }
+}
+loadUsers();
+</script>
+</body>
+</html>

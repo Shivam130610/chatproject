@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat App - Send Message</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        form { display: flex; flex-direction: column; max-width: 400px; }
+        input, textarea, button { margin: 10px 0; padding: 10px; font-size: 16px; }
+        #msg { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Send a Message</h2>
+    <form id="messageForm">
+        <input type="number" id="receiver" placeholder="Receiver ID" required>
+        <textarea id="text" placeholder="Message" required></textarea>
+        <button type="submit">Send</button>
+    </form>
+    <div id="msg"></div>
+
+    <script>
+        const form = document.getElementById('messageForm');
+        const msgDiv = document.getElementById('msg');
+
+        // Function to get CSRF token from cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const receiver = document.getElementById('receiver').value;
+            const text = document.getElementById('text').value;
+
+            try {
+                const res = await fetch('/api/send-message/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ receiver, text })
+                });
+
+                const data = await res.json();
+                if(res.ok){
+                    msgDiv.style.color = 'green';
+                    msgDiv.innerText = "Message sent successfully!";
+                    form.reset();
+                } else {
+                    msgDiv.style.color = 'red';
+                    msgDiv.innerText = data.detail || JSON.stringify(data);
+                }
+
+            } catch(err) {
+                msgDiv.style.color = 'red';
+                msgDiv.innerText = 'Error: ' + err;
+            }
+        });
+    </script>
+</body>
+</html>

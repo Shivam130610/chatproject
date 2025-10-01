@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Inbox</title>
+<style>
+body { font-family: Arial; margin: 30px; }
+ul { max-width: 600px; margin: auto; padding:0; list-style:none; }
+li { border-bottom:1px solid #ddd; margin-bottom:6px; padding-bottom:6px; }
+</style>
+</head>
+<body>
+<h2>Inbox</h2>
+<ul id="inboxList">Loading...</ul>
+
+<script>
+async function loadInbox(){
+    const token = localStorage.getItem('token');
+    if(!token){ document.getElementById('inboxList').innerText="Login required"; return; }
+
+    const res = await fetch('/api/inbox/', { headers: { 'Authorization':'Token '+token }});
+    if(res.ok){
+        const msgs = await res.json();
+        const ul = document.getElementById('inboxList');
+        ul.innerHTML = '';
+        msgs.forEach(m=>{
+            const li = document.createElement('li');
+            li.innerHTML = `<b>From:</b> ${m.sender.username} <br>${m.text} <br><i>${m.timestamp}</i>`;
+            ul.appendChild(li);
+        });
+    } else {
+        document.getElementById('inboxList').innerText="Error "+res.status;
+    }
+}
+loadInbox();
+</script>
+</body>
+</html>

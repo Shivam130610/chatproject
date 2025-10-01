@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat App</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    nav a { margin-right: 15px; }
+    .container { max-width: 600px; margin: auto; }
+    label { display: block; margin-top: 10px; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 10px; padding: 8px 12px; }
+    </style>
+</head>
+<body>
+    <nav>
+    <a href="register.html">Register</a>
+    <a href="login.html">Login</a>
+    <a href="users.html">Users</a>
+    <a href="send_message.html">Send Message</a>
+    <a href="inbox.html">Inbox</a>
+    <button id="logoutBtn" style="display:none">Logout</button>
+    </nav>
+
+    <hr>
+    <div id="status"></div>
+    <div class="container">
+    <!-- page content will be injected here -->
+    {{ content }}
+    </div>
+
+<script>
+function getToken(){ return localStorage.getItem('chat_token'); }
+function setToken(t){ localStorage.setItem('chat_token', t); updateUI(); }
+function clearToken(){ localStorage.removeItem('chat_token'); updateUI(); }
+
+function updateUI(){
+    const t = getToken();
+    document.getElementById('logoutBtn').style.display = t ? 'inline-block' : 'none';
+    document.getElementById('status').innerText = t ? "Logged in ✅" : "Not logged in ❌";
+}
+document.getElementById('logoutBtn').addEventListener('click', ()=>{ clearToken(); alert('Logged out'); });
+
+updateUI();
+</script>
+</body>
+</html>
