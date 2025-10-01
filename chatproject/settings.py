@@ -3,24 +3,19 @@ from pathlib import Path
 from decouple import config
 import dj_database_url
 
-# BASE DIR
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECRET KEY
+# Secret key
 SECRET_KEY = config('SECRET_KEY')
 
-# DEBUG
+# Debug off for production
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# ALLOWED HOSTS
-ALLOWED_HOSTS = [
-    'chatproject-sa51.onrender.com',  # <-- Replace with your actual Render URL
-    '127.0.0.1',
-    'localhost'
-]
+# Allowed hosts (add your Render URL)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
-
-# INSTALLED APPS
+# Installed apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -31,7 +26,6 @@ INSTALLED_APPS = [
     'chatapp',  # your app
 ]
 
-# MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -42,14 +36,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ROOT URLCONF
 ROOT_URLCONF = 'chatproject.urls'
 
-# TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'chatapp' / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -62,19 +54,19 @@ TEMPLATES = [
     },
 ]
 
-# WSGI
 WSGI_APPLICATION = 'chatproject.wsgi.application'
 
-# DATABASE
+# Database (PostgreSQL on Render)
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',  # fallback for local dev
-        conn_max_age=600,
-        ssl_require=True
+        default=config(
+            'DATABASE_URL',
+            default='sqlite:///' + str(BASE_DIR / 'db.sqlite3')
+        )
     )
 }
 
-# PASSWORD VALIDATORS
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -90,15 +82,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# INTERNATIONALIZATION
+# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
-# STATIC FILES
+# Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# DEFAULT AUTO FIELD
+# Media files (optional)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
