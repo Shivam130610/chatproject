@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+from decouple import config
+import dj_database_url
 
 from pathlib import Path
 
@@ -92,6 +94,15 @@ DATABASES = {
     }
 }
 
+import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3'  # fallback for local dev
+    )
+}
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -136,3 +147,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Login successful and redirect
 LOGIN_REDIRECT_URL = '/'  # inbox page
 LOGOUT_REDIRECT_URL = '/login/'  # logout and login page
+
+from decouple import config
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+# Generate a secret key and store it in Render env
+SECRET_KEY = config('SECRET_KEY')
+
+# Allowed hosts from environment
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
+
