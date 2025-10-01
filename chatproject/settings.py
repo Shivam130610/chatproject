@@ -14,7 +14,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 # ALLOWED HOSTS
 ALLOWED_HOSTS = [
-    'chatproject.onrender.com',  # <-- Replace with your actual Render URL
+    'https://chatproject-sa51.onrender.com',  # <-- Replace with your actual Render URL
     '127.0.0.1',
     'localhost'
 ]
